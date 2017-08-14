@@ -1,13 +1,16 @@
 var project = new Vue({
     el: '#project',
     data: {
-        project: { name : null, weight : null, production : null, dev : null, github: null, description: null},
+        project: { id: null, name : null, weight : null, production : null, dev : null, github: null, description: null},
         newProject: {name: null, project_id: null},
         newTask: {name: null, weight: null, state: null, priority: null, description: null},
         currentTask: {name: null, weight: null, state: null, priority: null, description: null},
         newCredential: {type: null, name: null, hostname: null, username: null, password: null, port: null},
         currentCredential: {type: null, name: null, hostname: null, username: null, password: null, port: null},
-        msg: {success: null, error: null}
+        msg: {success: null, error: null},
+        owner: {id: null},
+        members: [],
+        invited: {email: null}
     },
     ready: function(){
         this.setupProject();
@@ -105,10 +108,12 @@ var project = new Vue({
     },
     methods: {
         setupProject: function(){
+            this.getOwner();
+            this.getMembers();
             var url = window.location.href,
-                project_id  = url.split('projects/')[1];
+                project_id  = url.split('/').splice(-1);
 
-            $.get( "/api/projects/"+project_id, function( results ) {
+            $.get( window.baseurl + "/api/projects/"+project_id, function( results ) {
                 project.project = results.data;
                 Vue.nextTick(function () {
                     megaMenuInit();
@@ -124,7 +129,7 @@ var project = new Vue({
             $(".popup-form.update-project .first").focus();
         },
         updateProject: function(){
-            event.preventDefault();
+
             var updatedProject = this.project;
 
             delete updatedProject.tasks;
@@ -134,7 +139,7 @@ var project = new Vue({
 
             $.ajax({
                 type: 'POST',
-                url: "/api/projects/"+ updatedProject.id,
+                url: window.baseurl + "/api/projects/"+ updatedProject.id,
                 data: updatedProject,
                 error: function(e) {
                     var response = jQuery.parseJSON(e.responseText);
@@ -161,7 +166,7 @@ var project = new Vue({
             $("#confirm-btn").click(function(){
                 $.ajax({
                     type: "POST",
-                    url: "/api/tasks/"+taskId,
+                    url: window.baseurl + "/api/tasks/"+taskId,
                     data: {_method: "delete"},
                     success: function(){
                         $(".task-"+taskId).hide();
@@ -180,11 +185,11 @@ var project = new Vue({
             $(".popup-form.new-task .first").focus();
         },
         createTask: function(client_id, project_id){
-            event.preventDefault();
+
 
             $.ajax({
                 type: 'POST',
-                url: "/api/tasks/"+ client_id +"/"+ project_id,
+                url: window.baseurl + "/api/tasks/"+ client_id +"/"+ project_id,
                 data: project.newTask,
                 error: function(e) {
                     var response = jQuery.parseJSON(e.responseText);
@@ -220,13 +225,13 @@ var project = new Vue({
             $(".popup-form.update-task .first").focus();
         },
         updateTask: function(taskId){
-            event.preventDefault();
+
 
             this.currentTask._method = "put";
 
             $.ajax({
                 type: 'POST',
-                url: "/api/tasks/"+ taskId,
+                url: window.baseurl + "/api/tasks/"+ taskId,
                 data: project.currentTask,
                 error: function(e) {
                     var response = jQuery.parseJSON(e.responseText);
@@ -243,7 +248,7 @@ var project = new Vue({
             });
         },
         createCredential: function(user_id, project_id){
-            event.preventDefault();
+
 
             var credential = this.newCredential;
             credential.user_id = user_id;
@@ -251,7 +256,7 @@ var project = new Vue({
 
             $.ajax({
                 type: 'POST',
-                url: "/api/credentials",
+                url: window.baseurl + "/api/credentials",
                 data: credential,
                 error: function(e) {
                     var response = jQuery.parseJSON(e.responseText);
@@ -286,7 +291,7 @@ var project = new Vue({
             $("#confirm-btn").click(function(){
                 $.ajax({
                     type: "POST",
-                    url: "/api/credentials/"+credential.id,
+                    url: window.baseurl + "/api/credentials/"+credential.id,
                     data: {_method: "delete"},
                     success: function(){
                         project.project.credentials.$remove(credential);
@@ -306,12 +311,12 @@ var project = new Vue({
             $(".popup-form.update-credential .first").focus();
         },
         updateCredential: function(credentialId){
-            event.preventDefault();
+
             this.currentCredential._method = "put";
 
             $.ajax({
                 type: 'POST',
-                url: "/api/credentials/"+ credentialId,
+                url: window.baseurl + "/api/credentials/"+ credentialId,
                 data: project.currentCredential,
                 error: function(e) {
                     var response = jQuery.parseJSON(e.responseText);
@@ -325,6 +330,80 @@ var project = new Vue({
                     project.msg.success = result.message;
                     project.msg.error = null;
                 }
+            });
+        },
+        getOwner: function(){
+            var url = window.location.href,
+                project_id  = url.split('/').splice(-1);
+
+            $.get( window.baseurl + "/api/projects/"+project_id+"/owner", function( results ) {
+                project.owner = results.data;
+                Vue.nextTick(function () {
+                    megaMenuInit();
+                })
+            }).fail(function(e){
+                console.log( "error "+ e );
+            });
+        },
+        getMembers: function(){
+            var url = window.location.href,
+                project_id  = url.split('/').splice(-1);
+
+            $.get( window.baseurl + "/api/projects/"+project_id+"/members", function( results ) {
+                project.members = results.data;
+                console.log(project.members);
+                Vue.nextTick(function () {
+                    megaMenuInit();
+                })
+            }).fail(function(e){
+                console.log( "error "+ e );
+            });
+        },
+        inviteUser: function(project_id){
+            if(this.invited.email == ""){
+                this.invited.email = "";
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: window.baseurl + "/api/projects/"+ project_id +"/"+this.invited.email+"/invite",
+                data: project.currentCredential,
+                error: function(e) {
+                    var response = jQuery.parseJSON(e.responseText);
+
+                    project.msg.success = null;
+                    project.msg.error = response.message;
+
+                    return false;
+                },
+                success: function(result){
+                    project.members.push(result.data);
+                    project.msg.success = result.message;
+                    project.msg.error = null;
+                }
+            });
+        },
+        removeMember: function(project_id, member){
+            showSheet();
+            makePrompt("Are you sure you want to remove this member from this project?","","Not now", "Yes");
+
+            $("#cancel-btn").click(function(){
+                closePrompt();
+            });
+
+            $("#confirm-btn").click(function(){
+                $.ajax({
+                    type: "POST",
+                    url: window.baseurl + "/api/projects/"+project_id+"/"+member.id+"/remove",
+                    data: {_method: "delete"},
+                    success: function(){
+                        project.members.$remove(member);
+                        closePrompt();
+                    },
+                    error: function(e){
+                        closePrompt();
+                    }
+                });
             });
         }
     }

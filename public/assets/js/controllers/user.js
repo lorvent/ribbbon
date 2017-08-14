@@ -12,17 +12,20 @@ var userObj = new Vue({
 
     methods: {
         getUser: function(){
-            $.get( "/api/user/", function( result ) {
+            $.get( window.baseurl + "/api/user", function( result ) {
                 userObj.user = result;
             });
         },
-        update: function(){
-            event.preventDefault();
+        update: function(event){
+            if(event !== undefined) {
+                event.preventDefault();
+            }
+
             var data = this.user;
 
             $.ajax({
                 type: "POST",
-                url: "/api/user/"+data.id,
+                url: window.baseurl + "/api/user/"+data.id,
                 data: data,
                 success: function(result){
                     if(result.message != "Your changes have been saved"){
@@ -49,7 +52,7 @@ var userObj = new Vue({
             $("#confirm-btn").click(function(){
                 $.ajax({
                     type: "DELETE",
-                    url: "/api/user/",
+                    url: window.baseurl + "/api/user/",
                     success: function(result){
                         document.location.href="/";
                     },

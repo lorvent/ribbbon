@@ -33,7 +33,8 @@ a:hover{
 
 // Inputs
 input.form-control{
-    padding: 19px 12px
+    padding: 10px 12px;
+	height: auto;
 }
 input.form-control:focus,
 textarea.form-control:focus{
@@ -172,7 +173,7 @@ $side-nav-padding: 20px;
 	border-radius: 0;
     border: none;
     background-color: rgba(150,150,150,.2);
-    padding: $side-nav-padding;	
+    padding: 10px 20px;
     color: #fff;
 }
 .side-nav .search input:focus{
@@ -263,11 +264,13 @@ $side-nav-padding: 20px;
   color: #fff;
 }
 .btn-special{
-	background-color: #f81280;
-	color: #fff;
-	font-size: 2.5em;
-	padding: 10px 80px;
-	margin-top: 40px;
+  background-color :#f81280;
+  color: #fff;
+  font-size: 1.5em;
+  font-weight: lighter;
+  letter-spacing: 1px;
+  padding: 20px 130px;
+  margin-top: 40px;
 }
 .btn-special:hover{
 	background-color: #d11264;
@@ -643,7 +646,7 @@ $side-nav-padding: 20px;
 }
 .progress{
   background-color: #CECECE;
-  border-radius: 30px;
+  border-radius: 0;
 }
 .progress-bar{
   background-color: $color-primary-light;
@@ -660,9 +663,19 @@ $side-nav-padding: 20px;
   display: none;
 }
 
+// Table
+.table>thead>tr>th, 
+.table>tbody>tr>th, 
+.table>tfoot>tr>th, 
+.table>thead>tr>td, 
+.table>tbody>tr>td, 
+.table>tfoot>tr>td{
+  border-top: none;
+}
+
 // Login and register
 .special-form{
-	width: 500px;
+	max-width: 500px;
 	margin: 5% auto 0;
 	background-color: #393d4e;
 	padding: 10px;
@@ -680,7 +693,7 @@ $side-nav-padding: 20px;
 	opacity: .1;
 }
 .special-form input{
-  padding: 25px;
+  padding: 15px 25px;
 }
 .special-form .btn{
   padding: 20px;
@@ -703,11 +716,12 @@ $side-nav-padding: 20px;
 }
 
 .hug-header .btn{
-  font-size: 1.5em;
+  font-size: 1.2em;
   margin-top: 35px;
+  min-width: 130px;
 }
 .hug-header .btn.register{
-  margin-right: 40px;
+  margin-right: 20px;
 }
 
 .hug-hero .left-side,
@@ -754,6 +768,7 @@ $side-nav-padding: 20px;
   font-size: 3em;
   margin-bottom: 50px;
   text-transform: capitalize;
+  letter-spacing: 2px;
 }
 .hug-features i{
   font-size: 6em;
@@ -763,12 +778,22 @@ $side-nav-padding: 20px;
   margin-top: 0;
   color: $color-primary-light;
   text-transform: uppercase;
+  font-size: 1.4em;
+  letter-spacing: 1px;
+}
+.hug-features h3 .new{
+  color: #ffde00;
 }
 .hug-features p{
   color: #fff;
   line-height: 2;
+  letter-spacing: .2px;
 }
-
+.hug-features .feature.centered{
+  text-align: center;
+  float: none;
+  margin: 0 auto;
+}
 .hug-info{
   color: $color-primary-light;
   padding-bottom: 290px;
@@ -794,7 +819,9 @@ $side-nav-padding: 20px;
 }
 .hug-info .arrow{
   position: relative;
-  top: -90px;
+  top: -60px;
+  max-width: 120px;
+  margin-bottom: 50px;
 }
 
 .hug-ui{
@@ -840,6 +867,8 @@ $side-nav-padding: 20px;
   margin: 0 auto;
   font-weight: bold;
   text-transform: uppercase;
+  font-weight: lighter;
+  line-height: 1.3;
 }
 .hug-exit .img h2,
 .hug-exit .img a{
@@ -857,6 +886,9 @@ $side-nav-padding: 20px;
   margin-bottom: 10px;
   background-color: rgba(200,200,200,.5);;
 }
+.hug-footer h3{
+  font-size: 1.5em;
+}
 .hug-footer hr.special{
   background-color: $color-primary-light;
 }
@@ -870,7 +902,11 @@ $side-nav-padding: 20px;
   padding: 50px 0;
 }
 
-
+.project-list-container{
+	padding: 10px;
+	background-color: #fff;
+	border-radius: 4px;
+}
 
 // MEDIA QUERIES
 @media screen and (max-width: 991px) {
@@ -917,7 +953,26 @@ $side-nav-padding: 20px;
 }
 
 @media screen and (max-width: 600px) {
+  .hug-header .pull-left{
+      float: none !important;
+  }
+  .hug-header img{
+	  display: block;
+	  margin: 0 auto;
+  }
+  .hug-header .btn.register{
+    margin-right: 0;
+  }
+  .hug-header .btn{
+    width: 40%;
+    margin: 10px 6.6%;
+  }
+
   .hug-hero h1{
     font-size: 4em !important;
+  }
+
+  .btn-special{
+    padding: 20px 20%;
   }
 }

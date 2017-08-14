@@ -17,7 +17,7 @@ var client = new Vue({
 
   methods: {
   	getClients: function(){
-        $.get( "/api/clients/true", function( results ) {
+        $.get( window.baseurl + "/api/clients/true", function( results ) {
             client.clients = results.data;
             Vue.nextTick(function () {
                 megaMenuInit();
@@ -27,20 +27,18 @@ var client = new Vue({
         });
   	},
     showCreateForm: function(){
-          event.preventDefault();
-
           this.msg.success = null;
           this.msg.error = null;
           $(".new-client").show();
           $(".new-client .first").focus();
       },
   	create: function(new_client, update){
-		event.preventDefault();
+
 		update = update || false;
 
 		$.ajax({
 		  type: 'POST',
-		  url: "/api/clients",
+		  url: window.baseurl + "/api/clients",
 		  data: new_client,
 		  error: function(e) {
 		    var response = jQuery.parseJSON(e.responseText);
@@ -83,14 +81,14 @@ var client = new Vue({
         $(".popup-form.update-client").find('input[type=text],textarea,select').filter(':visible:first').focus();
     },
     updateClient: function(){
-        event.preventDefault();
+
         var data = this.currentClient;
         var id = data.id;
         data._method = "put";
 
         $.ajax({
             type: "POST",
-            url: "/api/clients/"+id,
+            url: window.baseurl + "/api/clients/"+id,
             data: data,
             success: function(e){
                 console.log(e);
@@ -111,7 +109,7 @@ var client = new Vue({
         makePrompt(
             "Are you sure you want to delete the client: "+currentClient.name+"?",
             "By deleting this client you will loose all data associated with any project under this client",
-            "No now", "Yes");
+            "Not now", "Yes");
 
         $("#cancel-btn").click(function(){
             closePrompt();
@@ -120,7 +118,7 @@ var client = new Vue({
         $("#confirm-btn").click(function(){
             $.ajax({
                 type: "POST",
-                url: "/api/clients/"+currentClient.id,
+                url: window.baseurl + "/api/clients/"+currentClient.id,
                 data: {_method: "delete"},
                 success: function(){
                     client.clients.splice(clientIndex);
@@ -141,7 +139,7 @@ var client = new Vue({
         });
     },
     showNewProjectForm: function(clientId, clientIndex){
-        event.preventDefault();
+
         this.msg.success = null;
         this.msg.error = null;
         this.newProject.client_id = clientId;
@@ -151,11 +149,10 @@ var client = new Vue({
         $(".popup-form.new-project .first").focus();
     },
   	createProject: function(){
-		event.preventDefault();
 
 		 $.ajax({
 		   type: 'POST',
-		   url: "/api/projects",
+		   url: window.baseurl + "/api/projects",
 		   data: client.newProject,
 		   error: function(e) {
                var response = jQuery.parseJSON(e.responseText);
